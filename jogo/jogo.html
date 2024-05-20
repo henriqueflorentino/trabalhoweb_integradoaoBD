@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kong VS Godzilla</title>
+    <link rel="icon" type="image/x-icon" href="/img/vs.png">
+    <link rel="stylesheet" href="jogo-style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+<div id="app">
+    <!-- Verifica se o jogo não acabou e exibe os personagens e o log -->
+    <div v-if="kong.vida > 0 && godzilla.vida > 0" class="container">
+        <div class="personagem">
+            <div class="barra-vida"
+                 :class="{
+                   'barra-vida-verde': kong.vida > 70,
+                   'barra-vida-amarela': kong.vida > 20 && kong.vida <= 70,
+                   'barra-vida-vermelha': kong.vida <= 20
+                 }"
+                 :style="{width: kong.vida + '%'}">{{ kong.vida }}</div>
+            <div class="sprite" style="background-image: url(/img/KONG.png);"></div>
+            <h1>KONG</h1>
+            <div class="acoes">
+                <button @click="atacar(true)">Atacar</button>
+                <button @click="defender(true)">Defender</button>
+                <button @click="usarPocao(true)">Usar cura</button>
+                <button @click="correr(true)">Correr</button>
+            </div>
+        </div>
+        <div class="personagem">
+            <div class="barra-vida"
+                 :class="{
+                   'barra-vida-verde': godzilla.vida > 70,
+                   'barra-vida-amarela': godzilla.vida > 20 && godzilla.vida <= 70,
+                   'barra-vida-vermelha': godzilla.vida <= 20
+                 }"
+                 :style="{width: godzilla.vida + '%'}">{{ godzilla.vida }}</div>
+            <div class="sprite" style="background-image: url(/img/GOD.png);"></div>
+            <h1>GODZILLA</h1>
+        </div>
+        <!-- Log de Ações -->
+        <div class="log-acao">
+            <h2>TURNOS</h2>
+            <ul>
+                <li v-for="acao in logDeAcoes" :key="acao">{{ acao }}</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Exibe a mensagem de fim de jogo se a vida de algum personagem chegar a zero -->
+    <div v-else>
+        <h1 class="fim">Fim de Jogo!</h1>
+        <h2>{{ kong.vida <= 0 ? 'GODZILLA venceu!' : 'KONG venceu!' }}</h2>
+    </div>
+</div>
+
+<script src="jogo.js"></script>
+</body>
+</html>

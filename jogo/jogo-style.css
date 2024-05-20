@@ -1,0 +1,113 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: rgb(36, 17, 34);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app {
+    display: flex; /* Usa flexbox para dispor os elementos lado a lado */
+    justify-content: start; /* Alinha os elementos ao início do contêiner */
+    align-items: start; /* Alinha os elementos ao topo do contêiner */
+    flex-wrap: nowrap; /* Não permite que os elementos se envolvam */
+    width: 80%;
+    max-width: 900px; /* Aumente se necessário para caber os personagens e o log de ações */
+    position: relative; /* Posicionamento relativo para o contêiner do app */
+}
+
+.personagem, .acoes {
+    display: inline-block; /* Exibe os personagens e ações como elementos de bloco inline */
+    vertical-align: top; /* Alinha os elementos ao topo */
+}
+
+.personagem {
+    background-color: rgb(229, 189, 166);
+    border: 2px solid black;
+    border-radius: 9px;
+    margin: 10px 20px 10px 0; /* Ajuste a margem conforme necessário */
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+}
+
+
+.acoes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+button {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(218, 93, 62);
+    color: whitesmoke;
+    cursor: pointer;
+    transition: background-color 0.7s, transform 0.2s;
+}
+
+button:hover {
+    background-color: rgb(177, 25, 25);
+    transform: translateY(-3px);
+}
+
+button:active {
+    transform: translateY(0px);
+}
+
+.barra-vida {
+    height: 32px;
+    background-color: rgb(49, 219, 49);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 5px;
+    margin-bottom: 16px;
+}
+
+.sprite {
+    height: 160px;
+    background-color: #ddd;
+}
+
+.log-acao {
+    border: 1px solid #000;
+    padding: 10px;
+    width: 200px;
+    height: 690px; /* Ajuste conforme a altura desejada */
+    overflow-y: auto; /* Permite rolagem vertical se o conteúdo exceder a altura */
+    background-color: rgb(229, 189, 166);
+    border-radius: 9px;
+    position: absolute; /* Posicionamento absoluto dentro de #app */
+    right: -70px; /* Distância da borda direita de #app */
+    top: 10px; /* Distância da borda superior de #app */
+    
+    
+}
+
+.fim{
+    color: #ddd;
+    text-align: center;
+}
+
+h2{
+    text-align: center;
+    
+}
+
+.barra-vida-verde {
+    background-color: rgb(49, 219, 49); /* Verde */
+}
+
+.barra-vida-amarela {
+    background-color: rgb(255, 215, 0); /* Amarelo */
+}
+
+.barra-vida-vermelha {
+    background-color: rgb(255, 38, 0); /* Vermelho */
+}
