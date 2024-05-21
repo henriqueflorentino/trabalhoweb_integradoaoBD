@@ -7,10 +7,10 @@ const PORT = 3000;
 
 // Configuração do banco de dados
 const config = {
-    user: 'mfunes',
-    password: 'Azure123@',
-    server: 'fatec-franca.database.windows.net',
-    database: 'empresa',
+    user: 'hadmin',
+    password: '877887@Hf',
+    server: 'server-um.database.windows.net',
+    database: 'fatec-projeto',
     options: {
         encrypt: true // Dependendo da configuração do seu servidor SQL Server
     }
@@ -67,11 +67,15 @@ app.get('/characters', async (req, res) => {
 
 // Rota para servir o arquivo HTML principal
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/jogo', (req, res) => {
+    res.sendFile(path.join(__dirname, '/jogo/jogo.html'));
 });
 
 app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dashboard.html'));
+    res.sendFile(path.join(__dirname, '/dashboard/dashboard.html'));
 });
 
 // Iniciar o servidor
