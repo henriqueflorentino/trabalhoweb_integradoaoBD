@@ -43,4 +43,6 @@ Para jogar basta utilizar os comandos:
 https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/0298c2ef-ceae-44dc-9744-f7e3c820c940
 
 
+###⚠️ AVISO:
+> Se alguma função não funcionar pode ser devido ao banco de dados da Azure, que pode ter encerrado seu periodo de pagamento e assim pausando o banco de dados
 
