@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const sql = require('mssql');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
 
 const app = express();
 const PORT = 3000;
@@ -15,67 +17,179 @@ const config = {
         encrypt: true // Dependendo da configuração do seu servidor SQL Server
     }
 };
+// Verifica se logDeAcoes é undefined e o inicializa como um array vazio se for
+if (typeof logDeAcoes === 'undefined') {
+    logDeAcoes = [];
+}
+// Função para verificar se a tabela LogAcoes existe
+const verificarTabelaLogAcoes = async () => {
+    try {
+        const pool = await sql.connect(config);
+        const request = pool.request();
+        const result = await request.query(`SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'LogAcoes'`);
+        return result.recordset.length > 0;
+    } catch (error) {
+        console.error('Erro ao verificar se a tabela LogAcoes existe:', error);
+        return false;
+    }
+};
+
+// Função para criar a tabela LogAcoes se ela não existir
+const criarTabelaLogAcoes = async () => {
+    const tabelaExiste = await verificarTabelaLogAcoes();
+    if (!tabelaExiste) {
+        try {
+            const pool = await sql.connect(config);
+            const request = pool.request();
+            await request.query(`
+                CREATE TABLE LogAcoes (
+                    Id INT IDENTITY(1,1) PRIMARY KEY,
+                    Mensagem NVARCHAR(255)
+                )
+            `);
+            console.log('Tabela LogAcoes criada com sucesso.');
+        } catch (error) {
+            console.error('Erro ao criar tabela LogAcoes:', error);
+        }
+    } else {
+        console.log('Tabela LogAcoes já existe.');
+    }
+};
+
+// Chamar a função para criar a tabela LogAcoes ao iniciar o servidor
+criarTabelaLogAcoes();
+
+
+// Chamar a função para criar a tabela LogAcoes ao iniciar o servidor
+criarTabelaLogAcoes();
 
 app.use(express.json());
 
-// Servir arquivos estáticos (como index.html)
-app.use(express.static(path.join(__dirname)));
+// Restante do código...
 
-// Rota para atualizar a vida do herói e do vilão
-app.post('/atualizarVida', async (req, res) => {
-    const { vidaHeroi, vidaVilao } = req.body;
+// Configuração da sessão
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Altere para true se estiver usando HTTPS
+}));
 
+// Servir arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+// Servir arquivos estáticos das pastas jogo, dashboard e login
+app.use('/jogo', express.static(path.join(__dirname, 'jogo')));
+app.use('/dashboard', express.static(path.join(__dirname, 'dashboard')));
+app.use('/login', express.static(path.join(__dirname, 'login')));
+app.use('/img', express.static(path.join(__dirname, 'img')));
+
+// Rota para registrar usuário
+app.post('/register', async (req, res) => {
+    const { usuario, senha } = req.body;
     try {
-        await sql.connect(config);
-        const request = new sql.Request();
-        await request.query(`
-      MERGE INTO Personagens AS target
-      USING (VALUES ('heroi', ${vidaHeroi}), ('vilao', ${vidaVilao})) AS source (Nome, Vida)
-      ON target.Nome = source.Nome
-      WHEN MATCHED THEN
-        UPDATE SET Vida = source.Vida
-      WHEN NOT MATCHED THEN
-        INSERT (Nome, Vida) VALUES (source.Nome, source.Vida);
-      `);
-        res.status(200).send('Vida do herói e do vilão atualizada com sucesso.');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Erro ao atualizar a vida do herói e do vilão.');
+        const pool = await sql.connect(config);
+        const hashedPassword = await bcrypt.hash(senha, 10);
+        const request = pool.request();
+        await request.input('usuario', sql.NVarChar, usuario)
+                      .input('senha', sql.NVarChar, hashedPassword)
+                      .query('INSERT INTO Usuarios (Usuario, Senha) VALUES (@usuario, @senha)');
+        res.status(201).send('Usuário registrado com sucesso.');
+    } catch (error) {
+        console.error('Erro ao registrar usuário:', error);
+        res.status(500).send('Erro ao registrar usuário.');
     }
 });
 
-// Rota para fornecer os dados do herói e do vilão
+// Rota para autenticar usuário
+app.post('/login', async (req, res) => {
+    const { usuario, senha } = req.body;
+    try {
+        const pool = await sql.connect(config);
+        const request = pool.request();
+        const result = await request.input('usuario', sql.NVarChar, usuario)
+                                     .query('SELECT * FROM Usuarios WHERE Usuario = @usuario');
+        const user = result.recordset[0];
+        if (!user || !(await bcrypt.compare(senha, user.Senha))) {
+            return res.status(400).send('Usuário ou senha incorretos.');
+        }
+        req.session.user = user.Usuario;
+        res.status(200).send('Login bem-sucedido.');
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        res.status(500).send('Erro ao fazer login.');
+    }
+});
+
+// Rota para atualizar a vida dos personagens e o log de ações na nova tabela LogAcoes
+app.post('/atualizarJogo', async (req, res) => {
+    const { vidaKong, vidaGodzilla, logDeAcoes } = req.body;
+    let transaction;
+    try {
+        const pool = await sql.connect(config);
+        transaction = new sql.Transaction(pool);
+        await transaction.begin();
+
+        // Atualizar a vida dos personagens na tabela Jogo
+        const request = pool.request();
+        await request.query(`
+            UPDATE Jogo SET Vida = ${vidaKong} WHERE Nome = 'kong';
+            UPDATE Jogo SET Vida = ${vidaGodzilla} WHERE Nome = 'godzilla';
+        `);
+
+        // Inserir as mensagens de log na tabela LogAcoes
+        for (const mensagem of logDeAcoes) {
+            await request.query(`INSERT INTO LogAcoes (Mensagem) VALUES ('${mensagem}')`);
+        }
+
+        await transaction.commit();
+        res.status(200).send('Dados do jogo e log de ações atualizados com sucesso.');
+    } catch (error) {
+        console.error('Erro ao atualizar dados do jogo e log de ações:', error);
+        if (transaction) {
+            await transaction.rollback();
+        }
+        res.status(500).send('Erro ao atualizar dados do jogo e log de ações.');
+    }
+});
+
+
+
+
+// Nova rota para buscar dados dos personagens
 app.get('/characters', async (req, res) => {
     try {
-        await sql.connect(config);
-        const request = new sql.Request();
-
-        // Consulta para obter os dados do herói
-        const heroResult = await request.query("SELECT * FROM Personagens WHERE Nome = 'heroi'");
-        const heroi = heroResult.recordset[0];
-
-        // Consulta para obter os dados do vilão
-        const villainResult = await request.query("SELECT * FROM Personagens WHERE Nome = 'vilao'");
-        const vilao = villainResult.recordset[0];
-
-        res.json({ heroi, vilao });
+        const pool = await sql.connect(config);
+        const request = pool.request();
+        const result = await request.query("SELECT * FROM Jogo");
+        const data = result.recordset.reduce((acc, curr) => {
+            acc[curr.Nome.toLowerCase()] = {
+                Vida: curr.Vida,
+                // LogAcoes removido daqui
+            };
+            return acc;
+        }, {});
+        res.json(data);
     } catch (error) {
-        console.error('Erro ao buscar dados do herói e do vilão:', error);
-        res.status(500).json({ error: 'Erro ao buscar dados do herói e do vilão.' });
+        console.error('Erro ao buscar dados do jogo:', error);
+        res.status(500).json({ error: 'Erro ao buscar dados do jogo.' });
     }
 });
+
+
 
 // Rota para servir o arquivo HTML principal
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+    res.sendFile(path.join(__dirname, 'login', 'login.html'));
 });
 
+// Rota para servir o arquivo HTML do jogo
 app.get('/jogo', (req, res) => {
-    res.sendFile(path.join(__dirname, '/jogo/jogo.html'));
+    res.sendFile(path.join(__dirname, 'jogo', 'jogo.html'));
 });
 
+// Rota para servir o arquivo HTML do dashboard
 app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, '/dashboard/dashboard.html'));
+    res.sendFile(path.join(__dirname, 'dashboard', 'dashboard.html'));
 });
 
 // Iniciar o servidor

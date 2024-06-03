@@ -2,45 +2,68 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Jogo Herói e Vilão</title>
-    <link rel="stylesheet" href="dashboard-style.css">
+    <title>Dashboard - Kong VS Godzilla</title>
+    <link rel="stylesheet" href="/dashboard/dashboard-style.css">
 </head>
 <body>
     <div id="app" class="container">
-        <h1>Dashboard</h1>
+        <h1>Dashboard - Kong VS Godzilla</h1>
         <div class="personagens">
             <div class="personagem">
-                <h2>Herói</h2>
-                <div>Vida: {{ heroiVida }}%</div>
+                <h2>KONG</h2>
+                <div>Vida: {{ kongVida }}%</div>
             </div>
             <div class="personagem">
-                <h2>Vilão</h2>
-                <div>Vida: {{ vilaoVida }}%</div>
+                <h2>GODZILLA</h2>
+                <div>Vida: {{ godzillaVida }}%</div>
             </div>
         </div>
+        <div class="log-acao">
+            <h2>Log de Ações</h2>
+            <ul>
+                <li v-for="acao in logDeAcoes" :key="acao">{{ acao }}</li>
+            </ul>
+        </div>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script>
-        new Vue({
+        function fetchCharacterData() {
+            fetch('http://localhost:3000/characters')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.kong && data.godzilla && data.kong.Vida && data.godzilla.Vida) {
+                        // Atualizar a vida dos personagens
+                        app.kongVida = data.kong.Vida;
+                        app.godzillaVida = data.godzilla.Vida;
+
+                        // Ajustar o log de ações
+                        const kongLogAcoes = data.kong.LogAcoes.map(acao => `KONG: ${acao}`);
+                        const godzillaLogAcoes = data.godzilla.LogAcoes.map(acao => `GODZILLA: ${acao}`);
+                        app.logDeAcoes = kongLogAcoes.concat(godzillaLogAcoes);
+                    } else {
+                        console.error('Dados dos personagens retornados do servidor têm uma estrutura inválida:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar dados dos personagens:', error);
+                });
+        }
+
+        const app = new Vue({
             el: '#app',
             data: {
-                heroiVida: '',
-                vilaoVida: ''
+                kongVida: 100,
+                godzillaVida: 100,
+                logDeAcoes: []
             },
             mounted() {
                 this.fetchCharacterData();
+                // Atualiza os dados dos personagens a cada 5 segundos
+                setInterval(this.fetchCharacterData, 5000);
             },
             methods: {
-                async fetchCharacterData() {
-                    try {
-                        const response = await fetch('http://localhost:3000/characters'); // Substitua pela sua rota da API
-                        const data = await response.json();
-                        this.heroiVida = data.heroi.Vida;
-                        this.vilaoVida = data.vilao.Vida;
-                    } catch (error) {
-                        console.error('Erro ao buscar dados dos personagens:', error);
-                    }
-                }
+                fetchCharacterData: fetchCharacterData
             }
         });
     </script>

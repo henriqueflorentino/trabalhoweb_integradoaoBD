@@ -111,3 +111,18 @@ h2{
 .barra-vida-vermelha {
     background-color: rgb(255, 38, 0); /* Vermelho */
 }
+
+.dashboard-button {
+    display: block;
+    margin: 20px auto;
+    padding: 30px 188px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dashboard-button:hover {
+    background-color: #45a049;
+}

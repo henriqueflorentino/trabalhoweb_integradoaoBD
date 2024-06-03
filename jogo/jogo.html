@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Kong VS Godzilla</title>
     <link rel="icon" type="image/x-icon" href="/img/vs.png">
-    <link rel="stylesheet" href="jogo-style.css">
+    <link rel="stylesheet" href="/jogo/jogo-style.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
@@ -40,11 +40,15 @@
             <h1>GODZILLA</h1>
         </div>
         <!-- Log de Ações -->
-        <div class="log-acao">
+        <div v-if="kong.vida > 0 && godzilla.vida > 0" class="log-acao">
             <h2>TURNOS</h2>
             <ul>
                 <li v-for="acao in logDeAcoes" :key="acao">{{ acao }}</li>
             </ul>
+        </div>
+
+        <div>
+            <button class="dashboard-button" @click="irParaDashboard">DASHBOARD</button>
         </div>
     </div>
     <!-- Exibe a mensagem de fim de jogo se a vida de algum personagem chegar a zero -->
@@ -54,6 +58,6 @@
     </div>
 </div>
 
-<script src="jogo.js"></script>
+<script src="/jogo/jogo.js"></script>
 </body>
 </html>

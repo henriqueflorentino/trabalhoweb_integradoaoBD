@@ -10,7 +10,30 @@ createApp({
         };
     },
     methods: {
-        atacar(isKong) {
+        async salvarDadosJogo() {
+            try {
+                await fetch('http://localhost:3000/atualizarJogo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        vidaKong: this.kong.vida,
+                        vidaGodzilla: this.godzilla.vida,
+                        pocoesKong: this.kong.pocoes,
+                        pocoesGodzilla: this.godzilla.pocoes,
+                        defendendoKong: this.kong.defendendo,
+                        defendendoGodzilla: this.godzilla.defendendo,
+                        logAcoes: this.logDeAcoes // Aqui está sendo enviado 'logAcoes'
+                    })
+                });
+            } catch (error) {
+                console.error('Erro ao salvar dados do jogo:', error);
+            }
+        },
+        
+        
+        async atacar(isKong) {
             if (this.turno !== (isKong ? 'kong' : 'godzilla')) {
                 this.adicionarAoLog("Não é o turno de " + (isKong ? "KONG" : "GODZILLA"));
                 return;
@@ -35,6 +58,7 @@ createApp({
                     }, 2000); // Delay de 2 segundos antes do GODZILLA agir
                 }
             }
+            this.salvarDadosJogo(); // Salva os dados do jogo após cada ação
         },
         acaoGodzilla() {
             if (this.turno === 'godzilla') {
@@ -43,8 +67,9 @@ createApp({
                 this[acaoAleatoria](false);
                 this.turno = 'kong'; // Troca o turno para o KONG após a ação do GODZILLA
             }
+            this.salvarDadosJogo(); // Salva os dados do jogo após a ação do GODZILLA
         },
-        defender(isKong) {
+        async defender(isKong) {
             if (this.turno !== (isKong ? 'kong' : 'godzilla')) {
                 this.adicionarAoLog("Não é o turno de " + (isKong ? "KONG" : "GODZILLA"));
                 return;
@@ -59,8 +84,9 @@ createApp({
                     this.acaoGodzilla();
                 }, 2000);
             }
+            this.salvarDadosJogo(); // Salva os dados do jogo após cada ação
         },
-        usarPocao(isKong) {
+        async usarPocao(isKong) {
             if (this.turno !== (isKong ? 'kong' : 'godzilla')) {
                 this.adicionarAoLog("Não é o turno de " + (isKong ? "KONG" : "GODZILLA"));
                 return;
@@ -81,8 +107,9 @@ createApp({
             } else {
                 this.adicionarAoLog(`Não há mais poções para o ${isKong ? 'KONG' : 'GODZILLA'}.`);
             }
+            this.salvarDadosJogo(); // Salva os dados do jogo após cada ação
         },
-        correr(isKong) {
+        async correr(isKong) {
             if (this.turno !== (isKong ? 'kong' : 'godzilla')) {
                 this.adicionarAoLog("Não é o turno de " + (isKong ? "KONG" : "GODZILLA"));
                 return;
@@ -101,9 +128,50 @@ createApp({
                     }, 2000);
                 }
             }
+            this.salvarDadosJogo(); // Salva os dados do jogo após cada ação
         },
         adicionarAoLog(mensagem) {
             this.logDeAcoes.push(mensagem);
+        },
+        
+        irParaDashboard() {
+            window.open('/dashboard/dashboard.html', '_blank', 'noopener,noreferrer');
+        },        
+        async salvarDadosJogo() {
+            try {
+                await fetch('http://localhost:3000/atualizarJogo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        vidaKong: this.kong.vida,
+                        vidaGodzilla: this.godzilla.vida,
+                        pocoesKong: this.kong.pocoes,
+                        pocoesGodzilla: this.godzilla.pocoes,
+                        defendendoKong: this.kong.defendendo,
+                        defendendoGodzilla: this.godzilla.defendendo,
+                        logAcoes: this.logDeAcoes
+                    })
+                });
+            } catch (error) {
+                console.error('Erro ao salvar dados do jogo:', error);
+            }
+        },
+        recuperarDadosJogo() {
+            // Recupera os dados do jogo do localStorage
+            try {
+                const jogoData = localStorage.getItem('jogoData');
+                if (jogoData) {
+                    const { kong, godzilla, turno, logDeAcoes } = JSON.parse(jogoData);
+                    this.kong = kong;
+                    this.godzilla = godzilla;
+                    this.turno = turno;
+                    this.logDeAcoes = logDeAcoes;
+                }
+            } catch (error) {
+                console.error('Erro ao recuperar dados do jogo:', error);
+            }
         }
     }
 }).mount("#app");

@@ -2,14 +2,14 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f2f2f2;
+    background-color: rgb(36, 17, 34);
 }
 
 .container {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: rgb(229, 189, 166);
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -29,7 +29,7 @@ h1 {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    background-color: rgb(226, 212, 204);
 }
 
 h2 {
@@ -41,3 +41,4 @@ h2 {
 #vilaoVida {
     font-size: 18px;
 }
+
