@@ -25,6 +25,8 @@ Para jogar basta utilizar os comandos:
 
 ### 🎬 Video do projeto:
 
-https://github.com/henriqueflorentino/game_turn/assets/94813609/beaf39db-ad4e-4c21-a371-7fd783a20719
+
+https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/0298c2ef-ceae-44dc-9744-f7e3c820c940
+
 
 
