@@ -15,7 +15,7 @@ Para jogar basta utilizar os comandos:
 
 ### ⚙️ Mecânica:
 
->A cada turno do KONG logo em seguida o GODZILLA realiza seu turno, podendo utilizar qualquer uma das mesmas ações de KONG. Do lado dos CARDS dos personagens possui um historico de turnos que mostra o andamento da partida e assim que a vida de um dos dois chega a zero a partida acaba.
+>Assim que você entrar é possivel se cadastrar ou fazer seu login, onde seus dados ficarão protegidos em um banco de dados da Azure! Já o jogo funcina assim: a cada turno do KONG logo em seguida o GODZILLA realiza seu turno, podendo utilizar qualquer uma das mesmas ações de KONG. Do lado dos CARDS dos personagens possui um historico de turnos que mostra o andamento da partida e assim que a vida de um dos dois chega a zero a partida acaba. Lembrando que você tem acesso a uma dashboard para conferir como seu jogo está prosseguindo! Legal não é?
 
 ### 👾 Confira o jogo!
 > Para dispostivos Mobile e Desktop
