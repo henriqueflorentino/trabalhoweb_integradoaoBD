@@ -1,4 +1,4 @@
-# 🕹️ Kong VS Godzilla - Jogo de Turnos (COM BANCO DE DADOS)
+# 🕹️ Kong VS Godzilla - Jogo de Turnos + Banco de Dados/Dashboard
 >Seja bem-vindo(a) ao projeto: "Kong VS Godzilla", que consiste em um jogo de turnos onde o objetivo é aplicar os conhecimentos adquiridos em sala de aula sobre Vue.js e implementar as suas funcionalidades em um jogo interativo, com banco de dados Azure
 
 ### ❓ Como jogar:
