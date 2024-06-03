@@ -122,7 +122,7 @@ app.post('/login', async (req, res) => {
 
 // Rota para atualizar a vida dos personagens e o log de ações na nova tabela LogAcoes
 app.post('/atualizarJogo', async (req, res) => {
-    const { vidaKong, vidaGodzilla, logDeAcoes } = req.body;
+    const { vidaKong, vidaGodzilla, logDeAcoes, turnoMessage } = req.body; // Adicionando 'turnoMessage' à requisição
     let transaction;
     try {
         const pool = await sql.connect(config);
@@ -141,6 +141,9 @@ app.post('/atualizarJogo', async (req, res) => {
             await request.query(`INSERT INTO LogAcoes (Mensagem) VALUES ('${mensagem}')`);
         }
 
+        // Inserir a mensagem de turno na tabela LogAcoes
+        await request.query(`INSERT INTO LogAcoes (Mensagem) VALUES ('${turnoMessage}')`);
+
         await transaction.commit();
         res.status(200).send('Dados do jogo e log de ações atualizados com sucesso.');
     } catch (error) {
@@ -152,6 +155,20 @@ app.post('/atualizarJogo', async (req, res) => {
     }
 });
 
+
+// Rota para buscar os registros de log de ações
+app.get('/logAcoes', async (req, res) => {
+    try {
+        const pool = await sql.connect(config);
+        const request = pool.request();
+        const result = await request.query("SELECT * FROM LogAcoes ORDER BY Data DESC");
+        console.log(result.recordset); // Verificar o formato dos dados de log
+        res.json(result.recordset);
+    } catch (error) {
+        console.error('Erro ao buscar registros de log de ações:', error);
+        res.status(500).json({ error: 'Erro ao buscar registros de log de ações.' });
+    }
+});
 
 
 
