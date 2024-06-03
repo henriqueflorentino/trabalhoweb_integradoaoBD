@@ -22,6 +22,20 @@ Para jogar basta utilizar os comandos:
 
 [Kong VS Godzilla || Clique para jogar!](https://trabalhoweb-integradoao-bd.vercel.app/)
 
+### 🖥️ Telas:
+* ![T1](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/ffa265a8-5f6f-4687-b6f5-555cd41f86e9)
+* ![T2](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/3f9a9dca-4192-4e2f-b973-bf88b8e78923)
+* ![T3](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/de28ab27-bd84-468c-bc1b-39fb1849683e)
+* ![T4](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/d3148ce0-7b98-4774-977a-a95a8b76be01)
+* ![T5](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/a4d93217-f95b-4454-8c75-c60ceb677ce8)
+* ![T6](https://github.com/henriqueflorentino/trabalhoweb_integradoaoBD/assets/94813609/d36fc76b-8d6a-4912-9170-a4e9d5991d0b)
+
+
+
+
+
+
+
 
 ### 🎬 Video do projeto:
 
